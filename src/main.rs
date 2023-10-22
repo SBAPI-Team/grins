@@ -1,7 +1,7 @@
 use std::{fs::File, io::Read};
 
 use bytes::{Buf, Bytes};
-use grins::{header::File as SBFile, Error};
+use grins::{Error, File as SBFile};
 
 fn main() -> anyhow::Result<()> {
     for arg in std::env::args().skip(1) {
@@ -21,7 +21,8 @@ fn main() -> anyhow::Result<()> {
 
         let content = file.content().clone();
         let c = content.into_parsed(Some(file.header()))?;
-        dbg!(c);
+        file.to_bytes()?;
+        // dbg!(c);
     }
 
     Ok(())

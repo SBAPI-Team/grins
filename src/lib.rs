@@ -3,15 +3,16 @@ extern crate thiserror;
 #[macro_use]
 mod util;
 
-pub type Sha1Hmac = hmac::Hmac<sha1::Sha1>;
+pub(crate) mod content;
+pub(crate) mod file;
 
-pub mod content;
-pub mod header;
+pub use content::*;
+pub use file::*;
 
-use bytes::{Buf, BufMut, Bytes, BytesMut};
-use header::{DataType, Version};
+use bytes::Bytes;
 use hmac::Mac;
-use strum::AsRefStr;
+
+pub type Sha1Hmac = hmac::Hmac<sha1::Sha1>;
 
 pub fn calculate_hmac(inp: &[u8]) -> Bytes {
     const FOOTER_KEY: &[u8; 64] =
@@ -66,6 +67,9 @@ pub enum Error {
 
     #[error("Data type {1} is unsupported in {0}")]
     DataTypeUnsupported(Version, DataType),
+
+    #[error("Filename in project is too long")]
+    FileNameTooLong,
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
